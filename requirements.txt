@@ -5,7 +5,7 @@ The investor's portfolio tracks how many shares they own of each stock.
 Buy trades made from a personal account are free.
 Sell trades made in a personal account are immediately charged a 5% fee.
 
-                              TFSA ACCOUNT
+                              TFSA ACCOUNT (Tax-Free Savings Account)
 
 A TFSA has a portfolio and funds available.
 The investor's portfolio tracks how many shares they own of each stock.
@@ -15,15 +15,17 @@ Every trade (buy/sell) made from a TFSA is charged a 1% fee.
 
 A trade can be: MARKET_BUY or MARKET_SELL.
 A trade is identified by the:
-  - stock (AAPL, FB, GOOG, TSLA).
-  - type of trade ( MARKET_BUY, MARKET_SELL ).
-  - the amount of shares being purchased/sold.
-  - the price of the stock at that day.
+  - stock (AAPL, FB, GOOG, TSLA). -- ENUM
+  - type of trade ( MARKET_BUY, MARKET_SELL ). -- ENUM
+  - the amount of shares being purchased/sold. -- int
+  - the price of the stock at that day. -- double
 
   
 Notes:
 Fields being inherited --> portfolio and funds
+Portfolio needs to be an entry of pair of data (Stock & No. of Shares)
+<Stock, Integer>
 create a Account class
-create a Trade class
+create a Trade class -- DONE 
 
  
