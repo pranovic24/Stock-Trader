@@ -24,6 +24,6 @@ public class Personal extends Account {
     @Override
     public boolean makeTrade(Trade trade) {
         // TODO Auto-generated method stub
-        return trade.getType() == Trade.Type.MARKET_BUY ? executePurchase(trade, 0) : executeSales(trade, SELL_FEE);
+        return trade.getType() == Trade.Type.MARKET_BUY ? super.executePurchase(trade, 0) : super.executeSales(trade, SELL_FEE);
     }
 }
