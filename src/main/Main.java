@@ -1,9 +1,17 @@
 package src.main;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
+import src.main.model.Trade;
+import src.main.model.Trade.Stock;
+import src.main.model.Trade.Type;
 import src.main.model.account.Account;
+import src.main.model.account.Personal;
+import src.main.model.account.TFSA;
 import src.main.utils.Color;
 
 public class Main {
@@ -13,7 +21,29 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
   
     public static void main(String[] args) {    
+        explainApp();
+        switch (accountChoice()) {
+            case "a": account = new Personal(INITIAL_DEPOSIT); break;
+            case "b": account = new TFSA(INITIAL_DEPOSIT); break;
+        }
 
+        initialBalance();
+
+        for (int day = 1; day <= 2160; day++) {
+            displayPrices(day);
+
+            String choice = buyOrSell();
+            String stock = chooseStock();
+            int shares = numShares(choice);
+
+            String result = account.makeTrade(new Trade(
+                Stock.valueOf(stock), 
+                choice.equals("buy") ? Type.MARKET_BUY : Type.MARKET_SELL, 
+                shares, 
+                Double.parseDouble(getPrice(Stock.valueOf(stock), day)))) ? "successful" : "unsuccessful";
+            
+            tradeStatus(result);
+        }
       
     }
 
@@ -27,7 +57,7 @@ public class Main {
     
     public static void initialBalance() {
         System.out.print("\n\n  You created a " + Color.YELLOW + account.getClass().getSimpleName() + Color.RESET + " account.");
-        System.out.println(" Your account balance is " + Color.GREEN + "$" + "<account.getFunds()>" + Color.RESET);
+        System.out.println(" Your account balance is " + Color.GREEN + "$" + account.getFunds() + Color.RESET);
         System.out.print("\n  Enter anything to start trading: ");
         scanner.nextLine();
     }
@@ -77,7 +107,7 @@ public class Main {
         return shares;
     }
     
-    /* TODO
+    // TODO
     public static void displayPrices(int day) {
         System.out.println("\n\n\t  DAY " + day + " PRICES\n");
 
@@ -87,7 +117,7 @@ public class Main {
         System.out.println("  " + Color.BLUE + Stock.TSLA + "\t\t" + Color.GREEN + getPrice(Stock.TSLA, day) + Color.RESET);
 
     }
-    */
+    
     public static void tradeStatus(String result) {
         System.out.println("\n  The trade was " + (result.equals("successful") ? Color.GREEN : Color.RED) + result + Color.RESET + ". Here is your portfolio:");
         System.out.println(account);
@@ -96,16 +126,33 @@ public class Main {
     }
     
     
-    /* TODO
+    // TODO
     public static String getPrice(Stock stock, int day) {
-        return "15.2343";
+        Path path = getPath(stock.toString());
+
+        try {
+            return Files.lines(path)
+            .skip(1)
+            .filter((line) -> Integer.valueOf(line.split(",")[0]) == day)
+            .map((line) -> line.split(",")[1])
+            .findFirst()
+            .orElse(null);
+        } catch (IOException e) {
+            // TODO: handle exception
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
 
     public static Path getPath(String stock) {
-        return null;
+        try {
+            return Paths.get(Thread.currentThread().getContextClassLoader().getResource("src/main/data/"+stock+".csv").toURI());
+        } catch (Exception e) {
+            // TODO: handle exception
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
-    */
-
-
+    
 }
